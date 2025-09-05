@@ -1,7 +1,10 @@
-from rest_framework import viewsets, status
-from rest_framework.decorators import action
+
+from rest_framework import viewsets, status, permissions
+from rest_framework.decorators import action, api_view, permission_classes, parser_classes
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.contrib.auth import get_user_model
+from django.contrib.auth import authenticate
 from django.utils.crypto import get_random_string
 from django.db import transaction
 from .models import Property, Unit, Visit, Payment, Service, Ticket, Notification
@@ -9,6 +12,31 @@ from .serializers import (
     UserSerializer, PropertySerializer, UnitSerializer, VisitSerializer,
     PaymentSerializer, ServiceSerializer, TicketSerializer, NotificationSerializer
 )
+@api_view(['POST'])
+@parser_classes([MultiPartParser, FormParser])
+@permission_classes([permissions.AllowAny])
+def register(request):
+    # Accepts: username, password, email, role, kyc_document (for tenants), first_name, last_name
+    data = request.data.copy()
+    role = data.get('role', 'tenant')
+    kyc_document = request.FILES.get('kyc_document')
+    user = User.objects.create_user(
+        username=data['username'],
+        password=data['password'],
+        email=data.get('email', ''),
+        role=role,
+        first_name=data.get('first_name', ''),
+        last_name=data.get('last_name', ''),
+    )
+    if role == 'tenant' and kyc_document:
+        user.kyc_document = kyc_document
+        user.save()
+    return Response(UserSerializer(user).data, status=201)
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def profile(request):
+    return Response(UserSerializer(request.user).data)
 
 User = get_user_model()
 

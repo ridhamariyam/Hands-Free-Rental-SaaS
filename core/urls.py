@@ -1,7 +1,9 @@
+
 from rest_framework.routers import DefaultRouter
 from .views import (
     UserViewSet, PropertyViewSet, UnitViewSet, VisitViewSet,
-    PaymentViewSet, ServiceViewSet, TicketViewSet, NotificationViewSet
+    PaymentViewSet, ServiceViewSet, TicketViewSet, NotificationViewSet,
+    register, profile
 )
 
 router = DefaultRouter()
@@ -14,4 +16,11 @@ router.register(r'services', ServiceViewSet)
 router.register(r'tickets', TicketViewSet)
 router.register(r'notifications', NotificationViewSet)
 
-urlpatterns = router.urls
+
+from django.urls import path
+
+urlpatterns = [
+    path('auth/register/', register, name='register'),
+    path('auth/profile/', profile, name='profile'),
+]
+urlpatterns += router.urls
