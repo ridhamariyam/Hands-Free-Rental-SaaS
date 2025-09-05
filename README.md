@@ -15,8 +15,8 @@ This is still a **Work in Progress (WIP)**. Features, APIs, and structures may c
 - Backend: Django + Django REST Framework + PostgreSQL  
 - Frontend: React (web) + React Native (mobile)  
 - Auth: JWT 
-- Payments
-- Notifications
+- Payments-Razorpay
+- Notifications-Firebase Cloud Messaging (push) + Twilio/WhatsApp API (for SMS/vendor contact)
 
 ## MVP Goals
 - Tenant signup/login with KYC  
