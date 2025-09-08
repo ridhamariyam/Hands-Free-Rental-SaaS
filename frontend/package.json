@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "^2.2.0",
+    "axios": "^1.11.0",
+    "expo-document-picker": "^13.1.6",
+    "metro": "0.76.7",
+    "@react-native-community/datetimepicker": "8.4.1"
+  }
+}
