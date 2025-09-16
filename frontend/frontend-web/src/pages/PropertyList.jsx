@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import axios from '../api/axios';
 import { AuthContext } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
 
 const PropertyList = () => {
   const { token } = useContext(AuthContext);
@@ -36,7 +37,13 @@ const PropertyList = () => {
             <strong>{property.name}</strong><br />
             {property.address}<br />
             {property.description}
-            {/* TODO: Link to units, booking, etc. */}
+            <ul>
+              {property.units && property.units.map((unit) => (
+                <li key={unit.id}>
+                  <Link to={`/units/${unit.id}`}>{unit.name}</Link>
+                </li>
+              ))}
+            </ul>
           </li>
         ))}
       </ul>

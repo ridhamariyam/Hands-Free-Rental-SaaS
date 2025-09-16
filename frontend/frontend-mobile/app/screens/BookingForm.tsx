@@ -85,7 +85,7 @@ const BookingForm = () => {
         value={scheduledAt || new Date()}
         mode="datetime"
         display="default"
-        onChange={(_, date: Date | undefined) => setScheduledAt(date ?? null)}
+        onChange={(_event: any, date: Date | undefined) => setScheduledAt(date ?? null)}
       />
 
       <TextInput

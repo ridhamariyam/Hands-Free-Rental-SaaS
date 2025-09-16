@@ -1,10 +1,19 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import axios from '../api/axios';
 import { AuthContext } from '../context/AuthContext';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+type RootStackParamList = {
+  PropertyList: undefined;
+  UnitDetails: { unitId: number };
+};
 
 const PropertyList = () => {
-  const auth = useContext(AuthContext);
+  const authContext = useContext(AuthContext);
+  const token = authContext?.token;
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -12,19 +21,17 @@ const PropertyList = () => {
     const fetchProperties = async () => {
       setLoading(true);
       try {
-        if (auth && auth.token) {
-          const response = await axios.get('properties/', {
-            headers: { Authorization: `Bearer ${auth.token}` },
-          });
-          setProperties(response.data);
-        }
+        const response = await axios.get('properties/', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setProperties(response.data);
       } catch (err) {
         // Handle error
       }
       setLoading(false);
     };
     fetchProperties();
-  }, [auth]);
+  }, [token]);
 
   return (
     <View style={{ flex: 1, padding: 16 }}>
@@ -40,7 +47,15 @@ const PropertyList = () => {
               <Text style={{ fontWeight: 'bold' }}>{item.name}</Text>
               <Text>{item.address}</Text>
               <Text>{item.description}</Text>
-              {/* TODO: Link to units, booking, etc. */}
+              {item.units && item.units.map((unit: any) => (
+                <TouchableOpacity
+                  key={unit.id}
+                  onPress={() => navigation.navigate('UnitDetails', { unitId: unit.id })}
+                  style={{ marginTop: 4, padding: 4, backgroundColor: '#eee' }}
+                >
+                  <Text>{unit.name}</Text>
+                </TouchableOpacity>
+              ))}
             </View>
           )}
         />
